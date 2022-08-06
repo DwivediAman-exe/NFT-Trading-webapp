@@ -4,6 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
+import { NFTContext } from '../context/NFTContext';
 import { Button, Input } from '../components';
 import images from '../assets';
 
@@ -15,9 +16,12 @@ const CreateNFT = () => {
 		description: '',
 	});
 	const { theme } = useTheme();
+	const { uploadToIPFS } = useContext(NFTContext);
 
-	const onDrop = useCallback(() => {
-		// upload image
+	const onDrop = useCallback(async (acceptedFile) => {
+		const url = await uploadToIPFS(acceptedFile[0]);
+
+		setFileUrl(url);
 	}, []);
 
 	const {
@@ -27,8 +31,6 @@ const CreateNFT = () => {
 		isDragAccept,
 		isDragReject,
 	} = useDropzone({ onDrop, accept: 'image/*', maxSize: 5000000 });
-
-	console.log(formInput);
 
 	const fileStyle = useMemo(
 		() => `
